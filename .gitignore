@@ -63,10 +63,16 @@ build/
 .idea/
 .vscode/
 
-# API Credentials & Logs
+# API Credentials, Logs & Test Files
 /api/error.log
 /api/config.php
+/api/test.php
+/api/info.php
+/api/simple.php
 
 # Web
 *.map
 *.js.map
+
+# Keep example files
+!/api/config.php.example

@@ -41,10 +41,10 @@ class Event {
       id: map['id'],
       title: map['title'],
       description: map['description'] ?? '',
-      isDateRange: map['is_date_range'] == 1,
+      isDateRange: map['is_date_range'] == '1' || map['is_date_range'] == 1,
       startDate: DateTime.parse(map['start_date']),
       endDate: map['end_date'] != null ? DateTime.parse(map['end_date']) : null,
-      stages: map['stages'],
+      stages: int.parse(map['stages'].toString()),
     );
   }
 

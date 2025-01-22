@@ -34,7 +34,7 @@ class Band {
       name: map['name'],
       startTime: DateTime.parse(map['start_time']),
       endTime: DateTime.parse(map['end_time']),
-      stageIndex: map['stage_index'],
+      stageIndex: int.parse(map['stage_index'].toString()),
     );
   }
 

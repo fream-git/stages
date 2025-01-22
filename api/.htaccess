@@ -1,3 +1,27 @@
+# Deaktiviere jegliche Authentifizierung
+SetEnvIf Authorization .+ HTTP_AUTHORIZATION=$0
+AuthType None
+AuthUserFile /dev/null
+Require all granted
+Allow from all
+Order allow,deny
+Allow from all
+Satisfy any
+
+# CORS Headers
+Header always set Access-Control-Allow-Origin "*"
+Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+Header always set Access-Control-Allow-Headers "Content-Type, Authorization"
+Header always set Access-Control-Expose-Headers "*"
+Header always set Access-Control-Allow-Credentials "true"
+
+# Aktiviere RewriteEngine
 RewriteEngine On
-RewriteRule ^events$ events.php [L]
-RewriteRule ^events/([^/]+)/bands/([^/]+)$ bands.php?eventId=$1&date=$2 [L] 
+
+# Erlaube OPTIONS requests
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ $1 [R=200,L]
+
+# API-Routing
+RewriteRule ^events$ events.php [L,QSA]
+RewriteRule ^events/([^/]+)/bands/([^/]+)$ bands.php?eventId=$1&date=$2 [L,QSA] 
