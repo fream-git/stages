@@ -2,10 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:stages/presentation/router/app_router.dart';
 import 'package:stages/presentation/theme/app_theme.dart';
+import 'package:stages/data/repositories/event_repository.dart';
+import 'package:stages/data/repositories/band_repository.dart';
 
 /// Hauptanwendungsklasse, die das grundlegende Setup der App definiert
 class StagesApp extends StatelessWidget {
-  const StagesApp({super.key});
+  final EventRepository eventRepository;
+  final BandRepository bandRepository;
+
+  const StagesApp({
+    super.key, 
+    required this.eventRepository,
+    required this.bandRepository,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +33,11 @@ class StagesApp extends StatelessWidget {
         Locale('de', ''),
       ],
       locale: const Locale('de'),
-      onGenerateRoute: AppRouter.onGenerateRoute,
+      onGenerateRoute: (settings) => AppRouter.onGenerateRoute(
+        settings,
+        eventRepository: eventRepository,
+        bandRepository: bandRepository,
+      ),
     );
   }
 } 

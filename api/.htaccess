@@ -1,0 +1,3 @@
+RewriteEngine On
+RewriteRule ^events$ events.php [L]
+RewriteRule ^events/([^/]+)/bands/([^/]+)$ bands.php?eventId=$1&date=$2 [L] 

@@ -1,24 +1,18 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stages/domain/entities/band.dart';
+import 'package:stages/data/services/api_service.dart';
 
 class BandRepository {
-  final SharedPreferences _prefs;
+  final ApiService _apiService;
   
-  BandRepository(this._prefs);
+  BandRepository(this._apiService);
 
   Future<List<Band>> loadBands(String eventId, DateTime date) async {
-    final key = 'bands_${eventId}_${date.year}-${date.month}-${date.day}';
-    final jsonString = _prefs.getString(key);
-    if (jsonString == null) return [];
-
-    final jsonList = jsonDecode(jsonString) as List;
-    return jsonList.map((json) => Band.fromMap(json as Map<String, dynamic>)).toList();
+    return _apiService.getBands(eventId, date);
   }
 
   Future<void> saveBands(String eventId, DateTime date, List<Band> bands) async {
-    final key = 'bands_${eventId}_${date.year}-${date.month}-${date.day}';
-    final jsonList = bands.map((band) => band.toMap()).toList();
-    await _prefs.setString(key, jsonEncode(jsonList));
+    await _apiService.saveBands(eventId, date, bands);
   }
 } 

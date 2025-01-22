@@ -36,15 +36,27 @@ class Event {
     );
   }
 
+  factory Event.fromMap(Map<String, dynamic> map) {
+    return Event(
+      id: map['id'],
+      title: map['title'],
+      description: map['description'] ?? '',
+      isDateRange: map['is_date_range'] == 1,
+      startDate: DateTime.parse(map['start_date']),
+      endDate: map['end_date'] != null ? DateTime.parse(map['end_date']) : null,
+      stages: map['stages'],
+    );
+  }
+
   /// Konvertiert das Event in eine Map für die Speicherung
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'title': title,
       'description': description,
-      'isDateRange': isDateRange,
-      'startDate': startDate.toIso8601String(),
-      'endDate': endDate?.toIso8601String(),
+      'is_date_range': isDateRange ? 1 : 0,
+      'start_date': startDate.toIso8601String(),
+      'end_date': endDate?.toIso8601String(),
       'stages': stages,
     };
   }

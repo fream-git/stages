@@ -50,3 +50,23 @@ yarn.lock
 *.swp
 *.swo
 *~
+
+# Dart/Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+*.iml
+
+# IDE
+.idea/
+.vscode/
+
+# API Credentials & Logs
+/api/error.log
+/api/config.php
+
+# Web
+*.map
+*.js.map

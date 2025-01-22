@@ -28,23 +28,23 @@ class Band {
     );
   }
 
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'name': name,
-      'startTime': startTime.toIso8601String(),
-      'endTime': endTime.toIso8601String(),
-      'stageIndex': stageIndex,
-    };
-  }
-
   factory Band.fromMap(Map<String, dynamic> map) {
     return Band(
       id: map['id'],
       name: map['name'],
-      startTime: DateTime.parse(map['startTime']),
-      endTime: DateTime.parse(map['endTime']),
-      stageIndex: map['stageIndex'],
+      startTime: DateTime.parse(map['start_time']),
+      endTime: DateTime.parse(map['end_time']),
+      stageIndex: map['stage_index'],
     );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'start_time': startTime.toIso8601String(),
+      'end_time': endTime.toIso8601String(),
+      'stage_index': stageIndex,
+    };
   }
 } 

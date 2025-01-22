@@ -8,8 +8,13 @@ import 'package:stages/data/repositories/band_repository.dart';
 /// Zeigt die Timeline eines Events an
 class TimelinePage extends StatefulWidget {
   final Event event;
+  final BandRepository bandRepository;
 
-  const TimelinePage({super.key, required this.event});
+  const TimelinePage({
+    super.key, 
+    required this.event,
+    required this.bandRepository,
+  });
 
   @override
   State<TimelinePage> createState() => _TimelinePageState();
@@ -21,35 +26,39 @@ class _TimelinePageState extends State<TimelinePage> {
   bool _isLoading = true;  // Neuer Loading-Status
   late List<String> _stageNames;  // Neue Variable für Bühnennamen
   final List<Band> _bands = [];
-  late BandRepository _bandRepository;
 
   @override
   void initState() {
     super.initState();
-    _selectedDate = widget.event.startDate;  // Initialisiere mit Startdatum
-    _initRepositories();
-  }
-
-  Future<void> _initRepositories() async {
-    final prefs = await SharedPreferences.getInstance();
-    _bandRepository = BandRepository(prefs);
+    _selectedDate = widget.event.startDate;
     _eventDays = _generateEventDays();
     _loadStageNames();
-    await _loadSelectedDate();  // Warte auf das Laden des gespeicherten Datums
     _loadBands();
   }
 
   Future<void> _loadBands() async {
-    final bands = await _bandRepository.loadBands(widget.event.id, _selectedDate);
-    setState(() {
-      _bands.clear();
-      _bands.addAll(bands);
-      _isLoading = false;
-    });
+    try {
+      final bands = await widget.bandRepository.loadBands(
+        widget.event.id, 
+        _selectedDate
+      );
+      setState(() {
+        _bands.clear();
+        _bands.addAll(bands);
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Fehler beim Laden: $e')),
+        );
+      }
+      setState(() => _isLoading = false);
+    }
   }
 
   Future<void> _saveBands() async {
-    await _bandRepository.saveBands(widget.event.id, _selectedDate, _bands);
+    await widget.bandRepository.saveBands(widget.event.id, _selectedDate, _bands);
   }
 
   Future<void> _loadStageNames() async {

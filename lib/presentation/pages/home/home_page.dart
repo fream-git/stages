@@ -5,36 +5,46 @@ import 'package:stages/domain/entities/event.dart';
 
 /// Startseite der Anwendung
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-
+  final EventRepository eventRepository;
+  
+  const HomePage({super.key, required this.eventRepository});
+  
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
   final List<Event> _events = [];
-  late EventRepository _repository;
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _initRepository();
-  }
-
-  Future<void> _initRepository() async {
-    final prefs = await SharedPreferences.getInstance();
-    _repository = EventRepository(prefs);
-    await _loadEvents();
+    _loadEvents();
   }
 
   Future<void> _loadEvents() async {
-    final events = await _repository.loadEvents();
-    setState(() {
-      _events.clear();
-      _events.addAll(events);
-      _isLoading = false;
-    });
+    try {
+      final events = await widget.eventRepository.loadEvents();
+      if (mounted) {
+        setState(() {
+          _events.clear();
+          _events.addAll(events);
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error in HomePage: $e'); // Debug
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Fehler beim Laden: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   String _formatDate(DateTime date) {
@@ -107,7 +117,7 @@ class _HomePageState extends State<HomePage> {
                                   
                                   if (result != null && context.mounted) {
                                     if (result == 'deleted') {
-                                      await _repository.deleteEvent(event.id);
+                                      await widget.eventRepository.deleteEvent(event.id);
                                       setState(() {
                                         _events.removeWhere((e) => e.id == event.id);
                                       });
@@ -118,7 +128,7 @@ class _HomePageState extends State<HomePage> {
                                       );
                                     } else {
                                       final updatedEvent = result as Event;
-                                      await _repository.updateEvent(updatedEvent);
+                                      await widget.eventRepository.updateEvent(updatedEvent);
                                       setState(() {
                                         final index = _events.indexWhere((e) => e.id == event.id);
                                         if (index != -1) {
@@ -151,7 +161,7 @@ class _HomePageState extends State<HomePage> {
           
           if (result != null && context.mounted) {
             final event = result as Event;
-            await _repository.addEvent(event);
+            await widget.eventRepository.addEvent(event);
             setState(() {
               _events.add(event);
             });
